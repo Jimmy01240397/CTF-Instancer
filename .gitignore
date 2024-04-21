@@ -1,0 +1,7 @@
+[Bb]in/
+*.bak
+.env
+*.db
+*.swp
+test.go
+docker-compose-test-*.yml

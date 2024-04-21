@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<head>
+    <title>{{ .Title }}</title>
+    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.css">
+    <style>body{font-family: Menlo, Consolas, Monaco, 'Liberation Mono', 'Lucida Console', monospace;}</style>
+    <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+</head>
+<body>
+    <main>
+        <h1>{{ .Title }}</h1>
+        <article>
+            {{ if or (eq .InstanceId "") (.Now.After .ExpiredAt) }}
+            <form action="/create" method="POST" style="text-align: center">
+                <input type="text" name="token" placeholder="CTFd access token" style="width: 100%" />
+                <input type="text" name="captcha" style="display: none">
+                <div class="h-captcha" data-sitekey="{{ .HCAPTCHA_SITE_KEY }}"></div>
+                <input type="submit" value="Create New Instance">
+            </form>
+            {{ else }}
+            <p>Your instance can be accessed here:
+                <a href="{{ .URL }}">{{ .URL }}</a>
+            </p>
+            <p>Stopping at: <span id="stop">{{ .ExpiredAt.Format "2006-01-02 15:04:05" }}</span></p>
+            <form action="/stop" method="POST" style="text-align: center">
+                <input type="submit" value="Stop" style="background-color:red">
+            </form>
+            {{ end }}
+        </article>
+    </main>
+</body>
