@@ -2,6 +2,7 @@ package router
 import (
     "fmt"
     "time"
+    "regexp"
 
     "github.com/gin-gonic/gin"
     "github.com/gin-contrib/sessions"
@@ -37,7 +38,12 @@ func index(c *gin.Context) {
     } else {
         data["InstanceId"] = ins.ID
         data["ExpiredAt"] = ins.ExpiredAt
-        data["URL"] = fmt.Sprintf("%s:%d", config.BaseURL, ins.Port)
+        if config.ProxyMode {
+            re := regexp.MustCompile(`:[0-9]+$`)
+            data["URL"] = fmt.Sprintf("%s://%s.%s%s", config.BaseScheme, ins.ID, config.BaseHost, re.FindString(c.Request.Host))
+        } else {
+            data["URL"] = fmt.Sprintf("%s://%s:%d", config.BaseScheme, config.BaseHost, ins.Port)
+        }
     }
     c.HTML(200, "index.tmpl", data)
 }

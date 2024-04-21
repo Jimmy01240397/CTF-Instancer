@@ -42,3 +42,7 @@ func GetInstance(user string) (ins *instance) {
     }
     return
 }
+
+func GetIDMap() map[string]*instance {
+    return idmap
+}

@@ -17,7 +17,8 @@ var Title string
 var MaxPort uint16
 var MinPort uint16
 var Validity time.Duration
-var BaseURL string
+var BaseScheme string
+var BaseHost string
 var ChalDir string
 var SubNetPool *netaddr.IPv4Net
 var Prefix uint8
@@ -30,6 +31,7 @@ var DBhost string
 var DBport string
 var DBname string
 var DBdebug bool
+var ProxyMode bool
 
 func init() {
     loadenv()
@@ -52,6 +54,15 @@ func init() {
             DBdebug = false
         }
     }
+    proxymodestr, exists := os.LookupEnv("PROXYMODE")
+    if !exists {
+        ProxyMode = false
+    } else {
+        ProxyMode, err = strconv.ParseBool(proxymodestr)
+        if err != nil {
+            ProxyMode = false
+        }
+    }
     Port = os.Getenv("PORT")
     Secret = make([]byte, 12)
     _, err = rand.Read(Secret)
@@ -61,7 +72,8 @@ func init() {
     Sessionname = os.Getenv("SESSIONNAME")
     Title = os.Getenv("TITLE")
     ChalDir = os.Getenv("CHALDIR")
-    BaseURL = os.Getenv("BASEURL")
+    BaseScheme = os.Getenv("BASESCHEME")
+    BaseHost = os.Getenv("BASEHOST")
     HCAPTCHA_SITE_KEY = os.Getenv("HCAPTCHA_SITE_KEY")
     HCAPTCHA_SECRET_KEY = os.Getenv("HCAPTCHA_SECRET_KEY")
     DBservice, exists = os.LookupEnv("DBSERVICE")

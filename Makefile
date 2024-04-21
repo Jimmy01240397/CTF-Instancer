@@ -11,14 +11,17 @@ systemd := $(exe).service
 tags := release
 ldflags := -s -w
 
-all: $(builddir)/$(exe)
+all: $(builddir)/$(exe) $(builddir)/template
 
 $(builddir)/$(exe): main.go go.mod go.sum $(importdir)
 		$(builder) build -o $(builddir)/$(exe) -tags $(tags) -ldflags "$(ldflags)" $<
 
+$(builddir)/template: template
+		cp -r template $(builddir)/template
+
 install: $(path)/$(exe) $(systemddir)/$(systemd)
 
-$(path)/$(exe): $(instdir)/$(exe) $(instdir)/$(config)
+$(path)/$(exe): $(instdir)/$(exe) $(instdir)/$(config) $(instdir)/template
 		ln -s $(instrelativedir)/$(exe) $(path)/$(exe)
 
 $(instdir): 
@@ -31,6 +34,9 @@ $(instdir)/$(exe): $(instdir) $(builddir)/$(exe)
 
 $(instdir)/$(config): $(instdir) $(config).sample
 		cp $(config).sample $(instdir)/$(config)
+
+$(instdir)/template: $(instdir) $(builddir)/template
+		cp -r $(builddir)/template $(instdir)/template
 
 $(systemddir)/$(systemd): $(systemd)
 		cp $(systemd) $(systemddir)/$(systemd)

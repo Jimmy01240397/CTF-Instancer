@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  instancer:
+    build: .
+    volumes:
+    - ./instance.db:/app/instance.db
+    - ./chal:/app/chal:ro
+    privileged: true
+    environment:
+    - PORT=8000
+    - SESSIONNAME=session
+    - DBNAME=instance.db
+    - TITLE=
+    - MINPORT=30000
+    - MAXPORT=31000
+    - VALIDITY=3m
+    - PREFIX=29
+    - SUBNETPOOL=10.200.0.0/16
+    - CHALDIR=chal
+    - BASESCHEME=http
+    - BASEHOST=
+    - HCAPTCHA_SITE_KEY=
+    - HCAPTCHA_SECRET_KEY=
+    - CTFDURL=
+    - PROXYMODE=true
+    ports:
+    - 8000:8000

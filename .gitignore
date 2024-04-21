@@ -4,4 +4,4 @@
 *.db
 *.swp
 test.go
-docker-compose-test-*.yml
+docker-compose-test.yml

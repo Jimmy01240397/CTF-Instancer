@@ -7,6 +7,7 @@ import (
     "github.com/go-errors/errors"
 
     "github.com/Jimmy01240397/CTF-Instancer/router"
+    "github.com/Jimmy01240397/CTF-Instancer/middlewares/proxy"
     "github.com/Jimmy01240397/CTF-Instancer/utils/config"
     "github.com/Jimmy01240397/CTF-Instancer/utils/errutil"
 )
@@ -17,6 +18,9 @@ func main() {
     }
     store := cookie.NewStore(config.Secret)
     backend := gin.Default()
+    if config.ProxyMode {
+        backend.Use(proxy.Proxy)
+    }
     backend.Use(errorHandler)
     backend.Use(gin.CustomRecovery(panicHandler))
     backend.Use(sessions.Sessions(config.Sessionname, store))

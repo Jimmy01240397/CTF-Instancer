@@ -1,10 +1,10 @@
-FROM golang:1.19 as builder
+FROM golang:1.19-alpine as builder
 
-RUN apt install make
+RUN apk add --no-cache make build-base
 
 COPY . /src
 WORKDIR /src
-RUN make
+RUN make clean && make
 
 
 FROM docker:dind as release
@@ -15,4 +15,8 @@ WORKDIR /app
 
 RUN touch .env
 
-ENTRYPOINT ["./ctfinstancer"]
+COPY ./docker-entrypoint.sh ./docker-entrypoint.sh
+
+RUN chmod +x ./docker-entrypoint.sh
+
+ENTRYPOINT ["./docker-entrypoint.sh"]
