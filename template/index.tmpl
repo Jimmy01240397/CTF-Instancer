@@ -20,10 +20,14 @@
             <p>Your instance can be accessed here:
                 <a href="{{ .URL }}">{{ .URL }}</a>
             </p>
-            <p>Stopping at: <span id="stop">{{ .ExpiredAt.Format "2006-01-02 15:04:05" }}</span></p>
+            <p>Stopping at: <span id="stop"></span></p>
             <form action="/stop" method="POST" style="text-align: center">
                 <input type="submit" value="Stop" style="background-color:red">
             </form>
+            <script>
+                const fmt = new Intl.DateTimeFormat([], { dateStyle: 'medium', timeStyle: 'long' });
+                document.getElementById('stop').textContent = fmt.format(new Date({{ .ExpiredAt }}));
+            </script>
             {{ end }}
         </article>
     </main>
