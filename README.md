@@ -3,6 +3,8 @@
 ## Run
 1. Edit `docker-compose.yml`
 ```yaml
+volumes:
+- ./chal:/app/chal:ro
 environment:
 - PORT=8000
 - SESSIONNAME=session
