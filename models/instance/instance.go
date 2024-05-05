@@ -58,14 +58,14 @@ func (c *instance) expired() {
     }
 }
 
-func newinstance(user string) (*instance, error) {
+func newinstance(user string) (*instance, bool, error) {
     if data, exist := usermap[user]; exist {
-        return data, nil
+        return data, exist, nil
     }
     reg := regexp.MustCompile(`\$\{SUBNET[0-9]+\}`)
     composefile, err := os.ReadFile(path.Join(config.ChalDir, "docker-compose.yml"))
     if err != nil {
-        return nil, err
+        return nil, false, err
     }
     subnetlength := len(reg.FindAllString(string(composefile), -1))
     subnets := make(subnetarr, subnetlength)
@@ -83,7 +83,7 @@ func newinstance(user string) (*instance, error) {
     usermap[ins.User] = &ins
     portmap[ins.Port] = &ins
     database.GetDB().Model(&instance{}).Create(&ins)
-    return &ins, nil
+    return &ins, false, nil
 }
 
 func (c *instance) del() {

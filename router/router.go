@@ -8,7 +8,7 @@ import (
     "github.com/gin-contrib/sessions"
 
     "github.com/Jimmy01240397/CTF-Instancer/utils/config"
-    "github.com/Jimmy01240397/CTF-Instancer/utils/hcaptcha"
+    "github.com/Jimmy01240397/CTF-Instancer/utils/captcha"
     "github.com/Jimmy01240397/CTF-Instancer/models/auth"
     "github.com/Jimmy01240397/CTF-Instancer/models/instance"
 )
@@ -30,7 +30,9 @@ func index(c *gin.Context) {
     ins := instance.GetInstance(name)
     data := gin.H{
         "Title": config.Title,
-        "HCAPTCHA_SITE_KEY": config.HCAPTCHA_SITE_KEY,
+        "CAPTCHA_SRC": config.CAPTCHA_SRC,
+        "CAPTCHA_CLASS": config.CAPTCHA_CLASS,
+        "CAPTCHA_SITE_KEY": config.CAPTCHA_SITE_KEY,
         "Now": time.Now(),
     }
     if ins == nil {
@@ -50,8 +52,7 @@ func index(c *gin.Context) {
 
 func create(c *gin.Context) {
     token := c.PostForm("token")
-    hcaptchares := c.PostForm("h-captcha-response")
-    if !hcaptcha.Verify(hcaptchares) {
+    if !captcha.Verify(c) {
         c.String(400, "Captcha verification failed.")
         return
     }

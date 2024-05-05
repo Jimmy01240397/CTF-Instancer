@@ -9,16 +9,19 @@ var lock *sync.RWMutex
 func Up(user string) (ins *instance, err error) {
     lock.Lock()
     defer lock.Unlock()
-    ins, err = newinstance(user)
+    var exist bool
+    ins, exist, err = newinstance(user)
     if err != nil {
         return
     }
-    err = ins.up()
-    if err != nil {
-        ins.del()
-        return
+    if !exist {
+        err = ins.up()
+        if err != nil {
+            ins.del()
+            return
+        }
+        go ins.expired()
     }
-    go ins.expired()
     return
 }
 

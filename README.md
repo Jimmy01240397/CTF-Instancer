@@ -23,8 +23,8 @@ environment:
 - BASESCHEME=http
 # Base host name. For example use aaa.com you will get <id>.aaa.com for instance host
 - BASEHOST=
-- HCAPTCHA_SITE_KEY=
-- HCAPTCHA_SECRET_KEY=
+- CAPTCHA_SITE_KEY=
+- CAPTCHA_SECRET_KEY=
 # CTFD URL
 - CTFDURL=
 - PROXYMODE=true

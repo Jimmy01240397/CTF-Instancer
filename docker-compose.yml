@@ -19,8 +19,27 @@ services:
     - CHALDIR=chal
     - BASESCHEME=http
     - BASEHOST=
-    - HCAPTCHA_SITE_KEY=
-    - HCAPTCHA_SECRET_KEY=
+    - CAPTCHA_SITE_KEY=
+    - CAPTCHA_SECRET_KEY=
+# recaptcha
+    - CAPTCHA_SRC=https://www.google.com/recaptcha/api.js
+    - CAPTCHA_CLASS=g-recaptcha
+    - CAPTCHA_BACKEND=https://www.google.com/recaptcha/api/siteverify
+    - CAPTCHA_RESPONSE_NAME=g-recaptcha-response
+
+# hcaptcha
+    #- CAPTCHA_SRC=https://js.hcaptcha.com/1/api.js
+    #- CAPTCHA_CLASS=h-captcha
+    #- CAPTCHA_BACKEND=https://api.hcaptcha.com/siteverify
+    #- CAPTCHA_RESPONSE_NAME=h-captcha-response
+
+# disable captcha
+    #- CAPTCHA_SITE_KEY=
+    #- CAPTCHA_SECRET_KEY=
+    #- CAPTCHA_SRC=
+    #- CAPTCHA_CLASS=
+    #- CAPTCHA_BACKEND=
+    #- CAPTCHA_RESPONSE_NAME=
     - CTFDURL=
     - PROXYMODE=true
     ports:

@@ -22,8 +22,12 @@ var BaseHost string
 var ChalDir string
 var SubNetPool *netaddr.IPv4Net
 var Prefix uint8
-var HCAPTCHA_SITE_KEY string
-var HCAPTCHA_SECRET_KEY string
+var CAPTCHA_SRC string
+var CAPTCHA_CLASS string
+var CAPTCHA_SITE_KEY string
+var CAPTCHA_SECRET_KEY string
+var CAPTCHA_BACKEND string
+var CAPTCHA_RESPONSE_NAME string
 var DBservice string
 var DBuser string
 var DBpasswd string
@@ -74,8 +78,12 @@ func init() {
     ChalDir = os.Getenv("CHALDIR")
     BaseScheme = os.Getenv("BASESCHEME")
     BaseHost = os.Getenv("BASEHOST")
-    HCAPTCHA_SITE_KEY = os.Getenv("HCAPTCHA_SITE_KEY")
-    HCAPTCHA_SECRET_KEY = os.Getenv("HCAPTCHA_SECRET_KEY")
+    CAPTCHA_SRC = os.Getenv("CAPTCHA_SRC")
+    CAPTCHA_CLASS = os.Getenv("CAPTCHA_CLASS")
+    CAPTCHA_SITE_KEY = os.Getenv("CAPTCHA_SITE_KEY")
+    CAPTCHA_SECRET_KEY = os.Getenv("CAPTCHA_SECRET_KEY")
+    CAPTCHA_BACKEND = os.Getenv("CAPTCHA_BACKEND")
+    CAPTCHA_RESPONSE_NAME = os.Getenv("CAPTCHA_RESPONSE_NAME")
     DBservice, exists = os.LookupEnv("DBSERVICE")
     if !exists {
         DBservice = "sqlite"

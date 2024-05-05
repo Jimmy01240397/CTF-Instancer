@@ -3,7 +3,9 @@
     <title>{{ .Title }}</title>
     <link rel="stylesheet" href="https://cdn.simplecss.org/simple.css">
     <style>body{font-family: Menlo, Consolas, Monaco, 'Liberation Mono', 'Lucida Console', monospace;}</style>
-    <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+    {{ if ne .CAPTCHA_SRC "" }}
+    <script src="{{ .CAPTCHA_SRC }}" async defer></script>
+    {{ end }}
 </head>
 <body>
     <main>
@@ -13,7 +15,9 @@
             <form action="/create" method="POST" style="text-align: center">
                 <input type="text" name="token" placeholder="CTFd access token" style="width: 100%" />
                 <input type="text" name="captcha" style="display: none">
-                <div class="h-captcha" data-sitekey="{{ .HCAPTCHA_SITE_KEY }}"></div>
+                {{ if and (ne .CAPTCHA_CLASS "") (ne .CAPTCHA_SITE_KEY "") }}
+                <div class="{{ .CAPTCHA_CLASS }}" data-sitekey="{{ .CAPTCHA_SITE_KEY }}"></div>
+                {{ end }}
                 <input type="submit" value="Create New Instance">
             </form>
             {{ else }}
