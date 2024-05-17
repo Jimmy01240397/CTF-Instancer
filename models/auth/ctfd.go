@@ -17,35 +17,37 @@ func Auth(identity any) (name string, err error) {
         err = fmt.Errorf("Token's format is invalid: %s", identity.(string))
         return
     }
-    var req *http.Request
-    req, err = http.NewRequest("GET", fmt.Sprintf("%s/api/v1/users/me", config.CTFDURL), nil)
-    if err != nil {
-        return
-    }
-    req.Header.Set("Authorization", fmt.Sprintf("Token %s", identity.(string)))
-    req.Header.Set("Content-Type", "application/json")
     client := &http.Client{}
+    var req *http.Request
     var res *http.Response
-    res, err = client.Do(req)
-    if err != nil {
-        return
+    var result []byte
+    for _, ctfdurl := range config.CTFDURL {
+        req, err = http.NewRequest("GET", fmt.Sprintf("%s/api/v1/users/me", ctfdurl), nil)
+        if err != nil {
+            return
+        }
+        req.Header.Set("Authorization", fmt.Sprintf("Token %s", identity.(string)))
+        req.Header.Set("Content-Type", "application/json")
+        res, err = client.Do(req)
+        if err != nil {
+            return
+        }
+        defer res.Body.Close()
+        result, _ = io.ReadAll(res.Body)
+        if res.StatusCode == 200 {
+            var resobj map[string]any
+            err = json.Unmarshal(result, &resobj)
+            if success, ok := resobj["success"].(bool); ok && success {
+                name = strconv.Itoa(int(resobj["data"].(map[string]any)["id"].(float64)))
+                return
+            }
+        }
     }
-    defer res.Body.Close()
-    result, _ := io.ReadAll(res.Body)
-    if res.StatusCode != 200 {
+    if res != nil {
         err = fmt.Errorf("Couldn't login as token: %s, status_code: %d, res: %s", identity.(string), res.StatusCode, string(result))
-        return
+    } else {
+        err = fmt.Errorf("Couldn't login as token")
     }
-    var resobj map[string]any
-    err = json.Unmarshal(result, &resobj)
-    if err != nil {
-        return
-    }
-    if success, ok := resobj["success"].(bool); !ok || !success {
-        err = fmt.Errorf("Couldn't login as token: %s, status_code: %d, res: %s", identity.(string), res.StatusCode, string(result))
-        return
-    }
-    name = strconv.Itoa(int(resobj["data"].(map[string]any)["id"].(float64)))
     return
 }
 

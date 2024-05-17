@@ -2,11 +2,12 @@ package config
 
 import (
     "os"
+    "strings"
 )
 
-var CTFDURL string
+var CTFDURL []string
 
 func init() {
     loadenv()
-    CTFDURL = os.Getenv("CTFDURL")
+    CTFDURL = strings.Split(os.Getenv("CTFDURL"), ",")
 }
