@@ -30,6 +30,7 @@ environment:
 # CTFD URL
 - CTFDURL=
 - PROXYMODE=true
+- NCMODE=false
 ports:
 # Same as PORT environment
 - 8000:8000
