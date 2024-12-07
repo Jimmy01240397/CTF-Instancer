@@ -42,5 +42,6 @@ services:
     #- CAPTCHA_RESPONSE_NAME=
     - CTFDURL=
     - PROXYMODE=true
+    - NCMODE=false
     ports:
     - 8000:8000

@@ -24,6 +24,7 @@ func (c *instance) up() error {
     cmd := exec.Command("docker", "compose", "-p", c.ID, "up", "-d")
     cmd.Dir = config.ChalDir
     cmd.Env = append(cmd.Environ(), fmt.Sprintf("PORT=%d", c.Port))
+    cmd.Env = append(cmd.Environ(), fmt.Sprintf("ID=%s", c.ID))
     for i, subnet := range c.SubNets {
         cmd.Env = append(cmd.Environ(), fmt.Sprintf("SUBNET%d=%s", i, subnet.String()))
     }
@@ -38,6 +39,7 @@ func (c *instance) down() error {
     cmd := exec.Command("docker", "compose", "-p", c.ID, "down")
     cmd.Dir = config.ChalDir
     cmd.Env = append(cmd.Environ(), fmt.Sprintf("PORT=%d", c.Port))
+    cmd.Env = append(cmd.Environ(), fmt.Sprintf("ID=%s", c.ID))
     for i, subnet := range c.SubNets {
         cmd.Env = append(cmd.Environ(), fmt.Sprintf("SUBNET%d=%s", i, subnet.String()))
     }
@@ -83,12 +85,15 @@ func newinstance(user string) (*instance, bool, error) {
     usermap[ins.User] = &ins
     portmap[ins.Port] = &ins
     database.GetDB().Model(&instance{}).Create(&ins)
+    os.Mkdir(fmt.Sprintf("/tmp/%s", ins.ID), 0755)
+    os.WriteFile(fmt.Sprintf("/tmp/%s/userid", ins.ID), []byte(ins.User), 0644)
     return &ins, false, nil
 }
 
 func (c *instance) del() {
     database.GetDB().Delete(c)
     if data, exist := usermap[c.User]; exist && data == c {
+        os.RemoveAll(fmt.Sprintf("/tmp/%s", c.ID))
         delete(idmap, c.ID)
         delete(usermap, c.User)
         delete(portmap, c.Port)

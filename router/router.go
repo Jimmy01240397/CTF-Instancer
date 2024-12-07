@@ -33,6 +33,7 @@ func index(c *gin.Context) {
         "CAPTCHA_SRC": config.CAPTCHA_SRC,
         "CAPTCHA_CLASS": config.CAPTCHA_CLASS,
         "CAPTCHA_SITE_KEY": config.CAPTCHA_SITE_KEY,
+        "NCMode": config.NCMode,
         "Now": time.Now(),
     }
     if ins == nil {
@@ -43,6 +44,8 @@ func index(c *gin.Context) {
         if config.ProxyMode {
             re := regexp.MustCompile(`:[0-9]+$`)
             data["URL"] = fmt.Sprintf("%s://%s.%s%s", config.BaseScheme, ins.ID, config.BaseHost, re.FindString(c.Request.Host))
+        } else if config.NCMode {
+            data["URL"] = fmt.Sprintf("%s %s %d", config.BaseScheme, config.BaseHost, ins.Port)
         } else {
             data["URL"] = fmt.Sprintf("%s://%s:%d", config.BaseScheme, config.BaseHost, ins.Port)
         }

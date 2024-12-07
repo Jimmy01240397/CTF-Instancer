@@ -22,7 +22,11 @@
             </form>
             {{ else }}
             <p>Your instance can be accessed here:
+                {{ if .NCMode }}
+                <code>{{ .URL }}</code>
+                {{ else }}
                 <a href="{{ .URL }}">{{ .URL }}</a>
+                {{ end }}
             </p>
             <p>Stopping at: <span id="stop"></span></p>
             <form action="/stop" method="POST" style="text-align: center">

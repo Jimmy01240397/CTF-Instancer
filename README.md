@@ -46,6 +46,8 @@ services:
     ports:
     # Instancer will use ${PORT} to control your port
     - ${PORT}:11111
+    volumes:
+    - /tmp/${ID}/userid:/userid:ro
     networks:
       default:
 

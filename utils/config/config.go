@@ -36,6 +36,7 @@ var DBport string
 var DBname string
 var DBdebug bool
 var ProxyMode bool
+var NCMode bool
 
 func init() {
     loadenv()
@@ -65,6 +66,15 @@ func init() {
         ProxyMode, err = strconv.ParseBool(proxymodestr)
         if err != nil {
             ProxyMode = false
+        }
+    }
+    ncmodestr, exists := os.LookupEnv("NCMODE")
+    if !exists || ProxyMode {
+        NCMode = false
+    } else {
+        NCMode, err = strconv.ParseBool(ncmodestr)
+        if err != nil {
+            NCMode = false
         }
     }
     Port = os.Getenv("PORT")
