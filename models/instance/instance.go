@@ -30,6 +30,7 @@ func (c *instance) up() error {
     }
     err := cmd.Run()
     if err != nil {
+        c.down()
         return err
     }
     return nil
