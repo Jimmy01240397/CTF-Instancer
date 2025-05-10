@@ -73,3 +73,5 @@ networks:
 ```
 
 4. Run `docker compose up -d` and wait for 2 minute
+
+5. Optional: Install [CTFd-Instance-Challenge-Plugin](https://github.com/Jimmy01240397/CTFd-Instance-Challenge-Plugin) on your CTFd for ctfd api mode
