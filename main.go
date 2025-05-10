@@ -8,6 +8,7 @@ import (
 
     "github.com/Jimmy01240397/CTF-Instancer/router"
     "github.com/Jimmy01240397/CTF-Instancer/middlewares/proxy"
+    "github.com/Jimmy01240397/CTF-Instancer/middlewares/token"
     "github.com/Jimmy01240397/CTF-Instancer/utils/config"
     "github.com/Jimmy01240397/CTF-Instancer/utils/errutil"
 )
@@ -16,15 +17,28 @@ func main() {
     if !config.Debug {
         gin.SetMode(gin.ReleaseMode)
     }
-    store := cookie.NewStore(config.Secret)
     backend := gin.Default()
-    if config.ProxyMode {
-        backend.Use(proxy.Proxy)
-    }
+    backend.Use(proxy.Proxy)
     backend.Use(errorHandler)
     backend.Use(gin.CustomRecovery(panicHandler))
-    backend.Use(sessions.Sessions(config.Sessionname, store))
-    backend.LoadHTMLGlob("template/*")
+    
+    switch config.ServiceMode {
+    case "web":
+        store := cookie.NewStore(config.Secret)
+        store.Options(sessions.Options{
+            Path:     "/",
+            MaxAge: 2592000,
+            HttpOnly: true,
+            Secure:   false,
+        })
+        backend.Use(sessions.Sessions(config.Sessionname, store))
+        backend.LoadHTMLGlob("template/*")
+    case "api":
+        backend.Use(token.AddMeta)
+    default:
+        panic("bad mode")
+    }
+    
     router.Init(&backend.RouterGroup)
     backend.Run(":"+string(config.Port))
 }

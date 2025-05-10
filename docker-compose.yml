@@ -5,15 +5,20 @@ services:
     build: .
     volumes:
     - ./chal:/app/chal:ro
+    - ./images:/app/images
     privileged: true
     environment:
     - PORT=8000
     - SESSIONNAME=session
-    - DBNAME=instance.db
+    - SERVICEMODE=web
+    #- SERVICEMODE=api
+    - TOKEN=testtoken
     - TITLE=
     - MINPORT=30000
     - MAXPORT=31000
     - VALIDITY=3m
+    - FLAGPREFIX=TSC
+    - FLAGMSG=testflag
     - PREFIX=29
     - SUBNETPOOL=10.200.0.0/16
     - CHALDIR=chal
@@ -41,7 +46,9 @@ services:
     #- CAPTCHA_BACKEND=
     #- CAPTCHA_RESPONSE_NAME=
     - CTFDURL=
-    - PROXYMODE=true
-    - NCMODE=false
+    - MODE0=Proxy
+    #- MODE0=Forward
+    #- MODE0=Command
+    #- COMMAND0=nc {{ .BaseHost }} {{ .Port }}
     ports:
     - 8000:8000

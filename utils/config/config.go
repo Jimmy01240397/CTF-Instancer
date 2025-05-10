@@ -5,14 +5,18 @@ import (
     "strconv"
     "time"
     "crypto/rand"
+    "fmt"
+    "strings"
 
     netaddr "github.com/dspinhirne/netaddr-go"
 )
 
 var Debug bool
 var Port string
+var ServiceMode string
 var Secret []byte
 var Sessionname string
+var Token string
 var Title string
 var MaxPort uint16
 var MinPort uint16
@@ -22,21 +26,20 @@ var BaseHost string
 var ChalDir string
 var SubNetPool *netaddr.IPv4Net
 var Prefix uint8
+var FlagPrefix string
+var FlagMsg string
 var CAPTCHA_SRC string
 var CAPTCHA_CLASS string
 var CAPTCHA_SITE_KEY string
 var CAPTCHA_SECRET_KEY string
 var CAPTCHA_BACKEND string
 var CAPTCHA_RESPONSE_NAME string
-var DBservice string
-var DBuser string
-var DBpasswd string
-var DBhost string
-var DBport string
-var DBname string
-var DBdebug bool
-var ProxyMode bool
-var NCMode bool
+
+const (
+    Forward = 0
+    Proxy = 1
+    Command = 2
+)
 
 func init() {
     loadenv()
@@ -50,33 +53,6 @@ func init() {
             Debug = false
         }
     }
-    dbdebugstr, exists := os.LookupEnv("DBDEBUG")
-    if !exists {
-        DBdebug = true
-    } else {
-        DBdebug, err = strconv.ParseBool(dbdebugstr)
-        if err != nil {
-            DBdebug = false
-        }
-    }
-    proxymodestr, exists := os.LookupEnv("PROXYMODE")
-    if !exists {
-        ProxyMode = false
-    } else {
-        ProxyMode, err = strconv.ParseBool(proxymodestr)
-        if err != nil {
-            ProxyMode = false
-        }
-    }
-    ncmodestr, exists := os.LookupEnv("NCMODE")
-    if !exists || ProxyMode {
-        NCMode = false
-    } else {
-        NCMode, err = strconv.ParseBool(ncmodestr)
-        if err != nil {
-            NCMode = false
-        }
-    }
     Port = os.Getenv("PORT")
     Secret = make([]byte, 12)
     _, err = rand.Read(Secret)
@@ -85,6 +61,9 @@ func init() {
     }
     Sessionname = os.Getenv("SESSIONNAME")
     Title = os.Getenv("TITLE")
+    Token = os.Getenv("TOKEN")
+    FlagPrefix = os.Getenv("FLAGPREFIX")
+    FlagMsg = os.Getenv("FLAGMSG")
     ChalDir = os.Getenv("CHALDIR")
     BaseScheme = os.Getenv("BASESCHEME")
     BaseHost = os.Getenv("BASEHOST")
@@ -94,15 +73,10 @@ func init() {
     CAPTCHA_SECRET_KEY = os.Getenv("CAPTCHA_SECRET_KEY")
     CAPTCHA_BACKEND = os.Getenv("CAPTCHA_BACKEND")
     CAPTCHA_RESPONSE_NAME = os.Getenv("CAPTCHA_RESPONSE_NAME")
-    DBservice, exists = os.LookupEnv("DBSERVICE")
+    ServiceMode, exists = os.LookupEnv("SERVICEMODE")
     if !exists {
-        DBservice = "sqlite"
+        ServiceMode = "web"
     }
-    DBuser = os.Getenv("DBUSER")
-    DBpasswd = os.Getenv("DBPASSWD")
-    DBhost = os.Getenv("DBHOST")
-    DBport = os.Getenv("DBPORT")
-    DBname = os.Getenv("DBNAME")
     subnetpoolstr, exists := os.LookupEnv("SUBNETPOOL")
     if !exists {
         SubNetPool, _ = netaddr.ParseIPv4Net("172.16.0.0/16")
@@ -151,4 +125,26 @@ func init() {
             Validity = 3 * time.Minute
         }
     }
+}
+
+func GetMode(index int) int {
+    modestr, exists := os.LookupEnv(fmt.Sprintf("MODE%d", index))
+    if !exists {
+        return Forward
+    }
+    modestr = strings.ToLower(modestr)
+    switch modestr {
+    case "forward":
+        return Forward
+    case "proxy":
+        return Proxy
+    case "command":
+        return Command
+    default:
+        return Forward
+    }
+}
+
+func GetCommand(index int) string {
+    return os.Getenv(fmt.Sprintf("COMMAND%d", index))
 }

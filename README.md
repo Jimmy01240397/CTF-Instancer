@@ -8,7 +8,10 @@ volumes:
 environment:
 - PORT=8000
 - SESSIONNAME=session
-- DBNAME=instance.db
+# Service mode web or api
+- SERVICEMODE=web
+# Token in ctfd api mode
+- TOKEN=testtoken
 # Your Instancer Title
 - TITLE=
 # Instance port range
@@ -16,6 +19,9 @@ environment:
 - MAXPORT=31000
 # Instance Validity
 - VALIDITY=3m
+# Dynamic flag in ctfd api mode
+- FLAGPREFIX=TSC
+- FLAGMSG=testflag
 # Instance subnet prefix
 - PREFIX=29
 # Instance subnet pool
@@ -29,8 +35,10 @@ environment:
 - CAPTCHA_SECRET_KEY=
 # CTFD URL
 - CTFDURL=
-- PROXYMODE=true
-- NCMODE=false
+# Multiport port: port id. for example: MODE{ID}=Proxy MODE{ID}=Forward MODE{ID}=Command
+- MODE0=Proxy
+# Command template in command mode. for example: COMMAND{ID}=nc {{ .BaseHost }} {{ .Port }}
+- COMMAND0=nc {{ .BaseHost }} {{ .Port }}
 ports:
 # Same as PORT environment
 - 8000:8000
@@ -43,12 +51,16 @@ ports:
 version: '3'
 services:
   chal:
+    image: chal
     build: .
     ports:
     # Instancer will use ${PORT} to control your port
-    - ${PORT}:11111
+    - ${PORT0}:11111
+    environment:
+    - FLAG=${FLAG}
     volumes:
     - /tmp/${ID}/userid:/userid:ro
+    - /tmp/${ID}/flag:/flag:ro
     networks:
       default:
 

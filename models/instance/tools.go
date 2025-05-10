@@ -2,6 +2,7 @@ package instance
 
 import (
     "regexp"
+    "fmt"
 
     "github.com/google/uuid"
     netaddr "github.com/dspinhirne/netaddr-go"
@@ -19,7 +20,6 @@ type subnetqueue []rangedata
 
 var idmap map[string]*instance
 var usermap map[string]*instance
-var portmap map[uint16]*instance
 
 var portpool portqueue
 var subnetpool subnetqueue
@@ -40,7 +40,10 @@ func push(src []rangedata, num uint64) (dst []rangedata) {
     return
 }
 
-func pop(src []rangedata) (dst []rangedata, num uint64) {
+func pop(src []rangedata) (dst []rangedata, num uint64, err error) {
+    if len(src) < 1 {
+        return src, 0, fmt.Errorf("Pop OOB")
+    }
     num = src[0].min
     if src[0].min == src[0].max {
         dst = (src)[1:]
@@ -104,8 +107,9 @@ func (c *portqueue) Push(num uint16) {
     *c = portqueue(push([]rangedata(*c), uint64(num)))
 }
 
-func (c *portqueue) Pop() (num uint16) {
-    tmpqueue, tmpnum := pop(*c)
+func (c *portqueue) Pop() (num uint16, err error) {
+    tmpqueue, tmpnum, errtmp := pop(*c)
+    err = errtmp
     num = uint16(tmpnum)
     *c = portqueue(tmpqueue)
     return
@@ -121,8 +125,9 @@ func (c *subnetqueue) Push(net *netaddr.IPv4Net) {
     *c = subnetqueue(push([]rangedata(*c), index))
 }
 
-func (c *subnetqueue) Pop() (net *netaddr.IPv4Net) {
-    tmpqueue, tmpnum := pop(*c)
+func (c *subnetqueue) Pop() (net *netaddr.IPv4Net, err error) {
+    tmpqueue, tmpnum, errtmp := pop(*c)
+    err = errtmp
     num := uint32(tmpnum)
     *c = subnetqueue(tmpqueue)
     net = config.SubNetPool.NthSubnet(uint(config.Prefix), num)
@@ -145,11 +150,11 @@ func genid() (id string) {
     return
 }
 
-func genport() uint16 {
+func genport() (uint16, error) {
     return portpool.Pop()
 }
 
-func gensubnet() *netaddr.IPv4Net {
+func gensubnet() (*netaddr.IPv4Net, error) {
     return subnetpool.Pop()
 }
 

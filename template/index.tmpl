@@ -11,7 +11,7 @@
     <main>
         <h1>{{ .Title }}</h1>
         <article>
-            {{ if or (eq .InstanceId "") (.Now.After .ExpiredAt) }}
+            {{ if or (eq .InstanceId "") (.Now.After .Status.ExpiredAt) }}
             <form action="/create" method="POST" style="text-align: center">
                 <input type="text" name="token" placeholder="CTFd access token" style="width: 100%" />
                 <input type="text" name="captcha" style="display: none">
@@ -22,19 +22,15 @@
             </form>
             {{ else }}
             <p>Your instance can be accessed here:
-                {{ if .NCMode }}
-                <code>{{ .URL }}</code>
-                {{ else }}
-                <a href="{{ .URL }}">{{ .URL }}</a>
-                {{ end }}
+            {{ .Status.AccessPoint }}
             </p>
-            <p>Stopping at: <span id="stop"></span></p>
-            <form action="/stop" method="POST" style="text-align: center">
-                <input type="submit" value="Stop" style="background-color:red">
+            <p>Destroying at: <span id="destroy"></span></p>
+            <form action="/destroy" method="POST" style="text-align: center">
+                <input type="submit" value="Destroy" style="background-color:red">
             </form>
             <script>
                 const fmt = new Intl.DateTimeFormat([], { dateStyle: 'medium', timeStyle: 'long' });
-                document.getElementById('stop').textContent = fmt.format(new Date({{ .ExpiredAt }}));
+                document.getElementById('destroy').textContent = fmt.format(new Date({{ .Status.ExpiredAt }}));
             </script>
             {{ end }}
         </article>
