@@ -48,9 +48,9 @@ ports:
 
 3. Challenge docker-compose.yml example
 
-<h1>Don't change <font color="red">container_name</font></h1>
-
-![image](https://github.com/user-attachments/assets/315d17b0-098e-41c3-b500-7364bccdde9b)
+> [!CAUTION]
+> Don't change ***container_name***
+> ![image](https://github.com/user-attachments/assets/315d17b0-098e-41c3-b500-7364bccdde9b)
 
 ```yaml
 version: '3'
