@@ -166,10 +166,12 @@ func create(c *gin.Context) {
         var user userdata
         if err := c.ShouldBindJSON(&user); err != nil {
             errutil.AbortAndStatus(c, 400)
+            return
         }
         name = strconv.Itoa(user.ID)
     default:
         errutil.AbortAndStatus(c, 500)
+        return
     }
     _, err = instance.Up(name)
     if err != nil {
@@ -203,10 +205,12 @@ func destroy(c *gin.Context) {
         var user userdata
         if err := c.ShouldBindJSON(&user); err != nil {
             errutil.AbortAndStatus(c, 400)
+            return
         }
         name = strconv.Itoa(user.ID)
     default:
         errutil.AbortAndStatus(c, 500)
+        return
     }
     err = instance.Down(name)
     if err != nil {
