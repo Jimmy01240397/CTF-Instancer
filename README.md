@@ -80,3 +80,7 @@ networks:
 4. Run `docker compose up -d` and wait for 2 minute
 
 5. Optional: Install [CTFd-Instance-Challenge-Plugin](https://github.com/Jimmy01240397/CTFd-Instance-Challenge-Plugin) on your CTFd for ctfd api mode
+
+## Reference
+
+frontend: https://github.com/splitline/My-CTF-Challenges/blob/5cac74d8e4eebc2316f171a3be6224d57219dfd9/hitcon-quals/2022/web/rce/instancer/app.js#L72
